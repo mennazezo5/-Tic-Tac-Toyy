@@ -125,7 +125,7 @@ void Game() {
 
 }
 void showMenu() {
-    void clearResults();
+   
     int choice;
     while (End != 0) {
         cout << "\nChoose an option:\n";
