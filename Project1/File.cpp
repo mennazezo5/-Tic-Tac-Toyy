@@ -1,6 +1,7 @@
 #include <iostream>
 #include<fstream>
 #include<time.h>
+#include<string.h>
 
 using namespace std;
 int wins = 0, loses = 0;
@@ -23,21 +24,51 @@ void saveResults(int p) {
     file.open("score.csv", ios::app);
     if (p == 1) { file << "game " << NOG << ":," << "WINS!\n"; }
     else { file << "game " << NOG << ":, " << "LOSE\n"; }
+  
+    
+    string currentBoard = "";
+    for (int i = 1; i < 10; i++) {
+        currentBoard += s[i];
+        if ((i - 1) % 3 == 1 || (i - 1) % 3 == 0) {
+            currentBoard += '|';
+        }
+        if ((i - 1) % 3 == 2) currentBoard += '\n';
+    }
+    ofstream filee("board.csv", ios::app);
+    if (file.is_open()) {
+        filee << NOG << endl;
+        filee << currentBoard;
+    }
+    filee.close();
+    file.close();
     NOG++;
 }
 void clearResults() {
     wins = 0, loses = 0;
     NOG = 1;
     ofstream file("score.csv", ios::trunc);
+    ofstream fil("board.csv", ios::trunc);
     if (file.is_open()) {
         cout << "History cleared.\n";
         file.close();
+        fil.close();
     }
     else { cout << "Unable to open file"; }
 }
 void showResults( ) {
- cout<< "Wins:" << wins << " \nLoses:"<<  loses ;
-   
+    ifstream file("score.csv");
+    char car;
+    if (file.is_open()) {
+        while (file.get(car)) {
+            if (car == ',') { continue; }
+            else {
+                cout << car;
+            }
+        }
+        file.close();
+        cout << "Total: " << wins << " win(s), " << loses << " lose(s)\n";
+    }
+    else { cout << "Unable to open file"; }
 }
 void Win(char j) {
     if (j == 'X') {
@@ -49,6 +80,21 @@ void Win(char j) {
         loses++;
         cout << "\a  CONGRATULATIONS Computer WIN!\n"; } 
     saveResults(pl);
+}
+void representGame(char gameID) {
+    ifstream fi("board.csv");
+    char ch;
+    while (fi.get(ch)) {
+        if (ch == gameID) {
+            for (int i = 0;i < 19;i++) {
+                fi.get(ch);
+                cout << ch;
+            }
+            break;
+        }
+    }
+    fi.close();
+
 }
 int check() {
     if (End == 0) { return -2; }
@@ -125,7 +171,7 @@ void Game() {
 
 }
 void showMenu() {
-   
+    void clearResults();
     int choice;
     while (End != 0) {
         cout << "\nChoose an option:\n";
@@ -140,6 +186,13 @@ void showMenu() {
         else if (choice == 2) {
             cout << "\nHistory:\n";
             showResults();
+            cout << "\nEnter game ID to represent it or 0 to exit history: ";
+            char gameID;
+            cin >> gameID;
+            if (gameID != '0') {
+                representGame(gameID);
+            }
+
             cout << "\nChoose an option:\n";
             cout << "[1]:Back to main menu\n";
             cout << "[2]: New Game\n";
