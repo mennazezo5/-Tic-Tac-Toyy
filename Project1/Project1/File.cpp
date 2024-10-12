@@ -3,7 +3,7 @@
 #include<time.h>
 #include<ctime>
 #include<string.h>
-
+#include <sstream>
 
 using namespace std;
 int wins = 0, loses = 0;
@@ -78,22 +78,32 @@ fil.close();
 }
 void showResults( ) {
     ifstream file("score.csv");
-    char car;
-    
+    string car;
+    int v;
     if (file.is_open()) {
-        while (file.get(car)) {
-           
-            if (car == ',') { continue; }
-            else {
-                
-                   
-                    cout << car;
-                if(car=='W'){wins++;}
-                else if(car=='L'){loses++;}
-            }
+        while (getline(file, car)) {
+            
+            for (int i = 0;i < car.size();i++) {
+                if (car[i] == ',') { continue; }
+                else {
+                    v = i;
+                    if (v > 0) {
+                       
+                        if (car[--v] != ')' && car[i] == ':') {
+                            cout << "(NULL)";
+                        }
+
+
+                        cout << car[i];
+                        if (car[i] == 'W') { wins++; }
+                        else if (car[i] == 'L') { loses++; }
+                    }
+                }
+            }cout << endl;
         }
         file.close();
         cout << "Total: " << wins << " win(s), " << loses << " lose(s)\n";
+
     }
     else { cout << "Unable to open file"; }
 }
