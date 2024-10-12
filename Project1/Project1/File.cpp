@@ -3,7 +3,7 @@
 #include<time.h>
 #include<ctime>
 #include<string.h>
-#include<ctime>
+
 
 using namespace std;
 int wins = 0, loses = 0;
@@ -24,11 +24,22 @@ void saveResults(int p) {
 
     fstream file("score.csv", ios::app);
     if (file.is_open()) {
+        time_t now = time(0);
+        struct tm ltm;
+        localtime_s(&ltm, &now);
         if (p == 1) {
-            file << "game " << NOG << ":,WIN!" << "\n";
+            file << "game " << NOG
+                                  << ",(" << ltm.tm_mday
+                << "/" << (1+ltm.tm_mon)
+                << "/" << (1900+ltm.tm_year)
+                << "):,WIN!" << "\n";
         }
         else {
-            file << "game " << NOG << ":,LOSE!" << "\n";
+            file << "game " << NOG
+                << ",(" << ltm.tm_mday
+                << "/" << (1 + ltm.tm_mon)
+                << "/" << (1900 + ltm.tm_year)
+                << "):, LOSE!" << "\n";
         }
     }
 
